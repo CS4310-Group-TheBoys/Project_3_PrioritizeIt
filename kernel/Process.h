@@ -80,8 +80,9 @@ class Process
      * @param entry Initial program counter value.
      * @param privileged If true, the process has unlimited access to hardware.
      * @param map Memory map to use
+     * @param priority Process priority level
      */
-    Process(ProcessID id, Address entry, bool privileged, int PriorityLevel, const MemoryMap &map);
+    Process(ProcessID id, Address entry, bool privileged, int priority, const MemoryMap &map);
 
     /**
      * Destructor function.
