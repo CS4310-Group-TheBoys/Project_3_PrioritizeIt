@@ -17,6 +17,7 @@
 
 #ifndef __KERNEL_SCHEDULER_H
 #define __KERNEL_SCHEDULER_H
+
 #ifndef __ASSEMBLER__
 
 #include <Vector.h>
@@ -31,22 +32,17 @@
  */
 
 /**
- * Responsible for deciding which Process may execute on the local Core.
+ * A process scheduling algorithm using a multilevel feedback queue.
  */
-class Scheduler
-{
-  public:
-
+class Scheduler {
+public:
     /**
      * Result code
      */
-    enum Result
-    {
+    enum Result {
         Success,
         InvalidArgument
     };
-
-  public:
 
     /**
      * Constructor function.
@@ -64,11 +60,12 @@ class Scheduler
      * Add a Process to the run schedule.
      *
      * @param proc Process pointer
-     * @param ignoreState True to not check for the Process state prior to dequeue.
+     * @param priority The priority of the process (higher is better)
+     * @param ignoreState True to not check for the Process state prior to enqueue.
      *
      * @return Result code
      */
-    Result enqueue(Process *proc, bool ignoreState);
+    Result enqueue(Process *proc, int priority, bool ignoreState);
 
     /**
      * Remove a Process from the run schedule.
@@ -87,10 +84,15 @@ class Scheduler
      */
     Process * select();
 
-  private:
+private:
+    /** Contains processes in the highest-priority queue */
+    Queue<Process *, MAX_PROCS> m_queueHigh;
 
-    /** Contains processes ready to run */
-    Queue<Process *, MAX_PROCS> m_queue;
+    /** Contains processes in the medium-priority queue */
+    Queue<Process *, MAX_PROCS> m_queueMedium;
+
+    /** Contains processes in the low-priority queue */
+    Queue<Process *, MAX_PROCS> m_queueLow;
 };
 
 /**
@@ -99,3 +101,4 @@ class Scheduler
 
 #endif /* __ASSEMBLER__ */
 #endif /* __KERNEL_SCHEDULER_H */
+
