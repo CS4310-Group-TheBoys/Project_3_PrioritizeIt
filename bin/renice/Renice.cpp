@@ -29,9 +29,6 @@ Renice::Result Renice::exec()
         ProcessID procID = (atoi(arguments().get("PROC_ID")));
         int newPriority = (atoi(arguments().get("NEW_PRIORITY")));
 
-        ProcessClient::Info info;
-        const ProcessClient::Result result = process.processInfo(procID, info);
-        Renicepid(procID, newPriority, 0, 0);
     }
     return Success;
 }
