@@ -32,7 +32,7 @@ Renice::Result Renice::exec()
         ProcessClient::Info info;
         const ProcessClient::Result result = process.processInfo(procID, info);
 
-        renicepid(pid, priority, 0, 0);
+        renicepid(procID, newPriority, 0, 0);
         printf("Selected Process: %d New Priority: %d, Old Priority: %d\n", procID, newPriority, info.kernelState.priority);
     }
     return Success;
