@@ -31,7 +31,7 @@ Renice::Result Renice::exec()
 
         ProcessClient::Info info;
         const ProcessClient::Result result = process.processInfo(procID, info);
-        renicepid(procID, newPriority, 0, 0);
+        Renicepid(procID, newPriority, 0, 0);
     }
     return Success;
 }
