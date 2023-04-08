@@ -15,97 +15,124 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <FreeNOS/System.h>
+#ifndef __LIB_LIBRUNTIME_PROCESSCLIENT_H
+#define __LIB_LIBRUNTIME_PROCESSCLIENT_H
+
+#include <FreeNOS/User.h>
+#include <FreeNOS/ProcessManager.h>
 #include <Types.h>
-#include <Macros.h>
-#include "ProcessClient.h"
+#include <String.h>
 
-const ProcessID ProcessClient::m_pid = ProcessCtl(SELF, GetPID, 0);
+/**
+ * @addtogroup lib
+ * @{
+ *
+ * @addtogroup libruntime
+ * @{
+ */
 
-const ProcessID ProcessClient::m_parent = ProcessCtl(SELF, GetParent, 0);
-
-void ProcessClient::setPriority(const ProcessID pid, int priority)
+/**
+ * ProcessClient provides information about all processes on the local core.
+ *
+ * @see ProcessManager
+ */
+class ProcessClient
 {
-    ProcessCtl(pid, SetPriority, priority);
-}
+  public:
 
-ProcessID ProcessClient::getProcessID() const
-{
-    return m_pid;
-}
+    /** Maximum number of processes */
+    static const Size MaximumProcesses = MAX_PROCS;
 
-ProcessID ProcessClient::getParentID() const
-{
-    return m_parent;
-}
-
-ProcessClient::Result ProcessClient::processInfo(const ProcessID pid,
-                                                 ProcessClient::Info &info) const
-{
-#ifndef __HOST__
-    const char * textStates[] = {
-        "Ready",
-        "Sleeping",
-        "Waiting",
-        "Stopped"
+    /**
+     * Result codes
+     */
+    enum Result
+    {
+        Success,
+        NotFound,
+        IOError
     };
-    const Arch::MemoryMap map;
-    const Memory::Range range = map.range(MemoryMap::UserArgs);
-    char cmd[128];
 
-    const API::Result result = ProcessCtl(pid, InfoPID, (Address) &info.kernelState);
-    switch (result)
+    /**
+     * Process information
+     */
+    typedef struct Info
     {
-        case API::Success:
-            break;
-        case API::NotFound:
-            return NotFound;
-        default:
-            return IOError;
+        /** Process state retrieved from the kernel */
+        ProcessInfo kernelState;
+
+        /** Full command including program path */
+        String command;
+
+        /** Textual state of the process */
+        String textState;
     }
+    Info;
 
-    // Read the full command
-    if (VMCopy(pid, API::Read, (Address) cmd, range.virt, sizeof(cmd)) != API::Success)
-    {
-        return IOError;
-    }
+  public:
+    void setPriority(const ProcessID pid, int priority);
+    /**
+     * Get current process identifier
+     *
+     * @return Current Process ID
+     */
+    ProcessID getProcessID() const;
 
-    // Fill output
-    info.command = cmd;
-    info.textState = (pid == m_pid ? "Running" : textStates[info.kernelState.state]);
-#endif /* __HOST__ */
+    /**
+     * Get parent process identifier
+     *
+     * @return Parent Process ID
+     */
+    ProcessID getParentID() const;
 
-    return Success;
-}
+    /**
+     * Get process information by its ID.
+     *
+     * @param pid Process identifier of the process.
+     * @param info Process information output
+     *
+     * @return Result code
+     */
+    Result processInfo(const ProcessID pid, Info &info) const;
 
-ProcessClient::Result ProcessClient::processInfo(const String program,
-                                                 ProcessClient::Info &info) const
-{
-    // Loop processes
-    for (ProcessID i = 0; i < MaximumProcesses; i++)
-    {
-        const Result result = processInfo(i, info);
-        if (result == Success && info.command.equals(program))
-        {
-            return result;
-        }
-    }
+    /**
+     * Get process information by its program name
+     *
+     * Returns the information for the first process
+     * that is running the given program.
+     *
+     * @param program Path to the program
+     * @param info Process information output
+     *
+     * @return Result code
+     */
+    Result processInfo(const String program, Info &info) const;
 
-    return NotFound;
-}
+    /**
+     * Find a process by its program name.
+     *
+     * Returns the information for the first process
+     * that is running the given program.
+     *
+     * @param program Path to the program
+     *
+     * @return ProcessID of the first process that matches
+     *         or ANY if none found.
+     */
+    ProcessID findProcess(const String program) const;
 
-ProcessID ProcessClient::findProcess(const String program) const
-{
-    ProcessClient::Info info;
+  private:
 
-    const Result result = processInfo(program, info);
-    if (result == Success)
-    {
-        return info.kernelState.id;
-    }
-    else
-    {
-        return ANY;
-    }
-}
+    /** Our own process identifier */
+    static const ProcessID m_pid;
 
+    /** Our parent process identifier */
+    static const ProcessID m_parent;
+};
+
+/**
+ * @}
+ * @}
+ */
+
+#endif /* __LIB_LIBRUNTIME_PROCESSCLIENT_H */
