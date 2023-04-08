@@ -96,7 +96,7 @@ class Process
      */
     ProcessID getID() const;
   
-    ProcessID getPriorityLevel() u8;
+    ProcessID getPriorityLevel();
 
     /**
      * Retrieve our parent ID.
