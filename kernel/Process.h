@@ -80,9 +80,8 @@ class Process
      * @param entry Initial program counter value.
      * @param privileged If true, the process has unlimited access to hardware.
      * @param map Memory map to use
-     * @param PriorityLevel Process priority level
      */
-    Process(ProcessID id, Address entry, bool privileged, u8 PriorityLevel, const MemoryMap &map);
+    Process(ProcessID id, Address entry, bool privileged, const MemoryMap &map);
 
     /**
      * Destructor function.
@@ -90,13 +89,18 @@ class Process
     virtual ~Process();
 
     /**
+     * Retrieve our process priority.
+     *
+     * @return Process priority.
+     */
+    int getPriority() const;
+
+    /**
      * Retrieve our ID number.
      *
      * @return Process Identification number.
      */
     ProcessID getID() const;
-  
-    ProcessID getPriorityLevel();
 
     /**
      * Retrieve our parent ID.
@@ -104,8 +108,6 @@ class Process
      * @return Process ID of our parent.
      */
     ProcessID getParent() const;
-
-    u8 getPriorityLevel();
 
     /**
      * Get Wait ID.
@@ -155,6 +157,13 @@ class Process
     bool operator == (Process *proc);
 
   protected:
+
+    /**
+     * Set the priority level of the process.
+     *
+     * @param priority the priority level in range of [1, 5] to set the process to.
+     */
+    Result setPriority(int priority);
 
     /**
      * Initialize the Process.
@@ -247,15 +256,14 @@ class Process
     void setParent(ProcessID id);
 
   protected:
+    /** Process Priority with default value of 3, range = [1, 5] */
+    int m_priority;
 
     /** Process Identifier */
     const ProcessID m_id;
 
     /** Parent process */
     ProcessID m_parent;
-
-    /** Priority level*/
-    u8 m_priorityLevel;
 
     /** Current process status. */
     State m_state;
