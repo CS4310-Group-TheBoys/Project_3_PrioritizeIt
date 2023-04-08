@@ -18,6 +18,10 @@ Renice::Renice(int argc, char **argv)
     parser().registerFlag('n', "priority", "change priority level");
 }
 
+Renice::~Renice()
+{
+}
+
 Renice::Result Renice::exec()
 {
     if(arguments().get("priority")) {
