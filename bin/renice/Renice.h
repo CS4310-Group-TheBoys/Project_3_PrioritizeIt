@@ -23,11 +23,6 @@ class Renice : public POSIXApplication {
         Renice(int argc, char **argv);
 
         /**
-         * Destructor
-         */
-        virtual ~Renice();
-
-        /**
          * Execute the application.
          *
          * @return Result code
