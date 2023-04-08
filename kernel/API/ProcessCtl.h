@@ -50,6 +50,7 @@ typedef enum ProcessOperation
     WaitTimer,
     EnterSleep,
     Schedule,
+    ReniceCMD,
     Wakeup,
     Stop,
     Resume,

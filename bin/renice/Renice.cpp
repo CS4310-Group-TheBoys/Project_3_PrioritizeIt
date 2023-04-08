@@ -18,10 +18,6 @@ Renice::Renice(int argc, char **argv)
     parser().registerFlag('n', "priority", "change priority level");
 }
 
-Renice::~Renice()
-{
-}
-
 Renice::Result Renice::exec()
 {
     if(arguments().get("priority")) {
@@ -29,11 +25,7 @@ Renice::Result Renice::exec()
         ProcessID procID = (atoi(arguments().get("PROC_ID")));
         int newPriority = (atoi(arguments().get("NEW_PRIORITY")));
 
-        ProcessClient::Info info;
-        const ProcessClient::Result result = process.processInfo(procID, info);
-
-        renicepid(procID, newPriority, 0, 0);
-        printf("Selected Process: %d New Priority: %d, Old Priority: %d\n", procID, newPriority, info.kernelState.priority);
+        process.setPriorityLevel(procID, newPriority);
     }
     return Success;
 }

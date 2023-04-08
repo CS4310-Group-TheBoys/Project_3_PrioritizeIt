@@ -25,7 +25,7 @@ class Renice : public POSIXApplication {
         /**
          * Destructor
          */
-        virtual ~Renice();
+    
 
         /**
          * Execute the application.

@@ -82,7 +82,7 @@ class Process
      * @param map Memory map to use
      * @param PriorityLevel Process priority level
      */
-    Process(ProcessID id, Address entry, bool privileged, u8 PriorityLevel, const MemoryMap &map);
+    Process(ProcessID id, Address entry, bool privileged, const MemoryMap &map);
 
     /**
      * Destructor function.
@@ -96,7 +96,9 @@ class Process
      */
     ProcessID getID() const;
   
-    ProcessID getPriorityLevel() u8;
+    u8 getPriorityLevel();
+
+    u8 setPriorityLevel(u8 newPriority);
 
     /**
      * Retrieve our parent ID.
@@ -104,8 +106,6 @@ class Process
      * @return Process ID of our parent.
      */
     ProcessID getParent() const;
-
-    u8 getPriorityLevel();
 
     /**
      * Get Wait ID.

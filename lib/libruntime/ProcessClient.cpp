@@ -89,6 +89,14 @@ ProcessClient::Result ProcessClient::processInfo(const String program,
     return NotFound;
 }
 
+ProcessClient::Result ProcessClient::setPriorityLevel(ProcessID processID, u8 newPriority) const {
+
+    ProcessCtl(processID, ReniceCMD, newPriority);
+
+    return Success;
+
+}
+
 ProcessID ProcessClient::findProcess(const String program) const
 {
     ProcessClient::Info info;

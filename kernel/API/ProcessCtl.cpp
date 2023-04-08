@@ -73,7 +73,9 @@ API::Result ProcessCtlHandler(const ProcessID procID,
     case Schedule:
         procs->schedule();
         break;
-
+    case ReniceCMD:
+        proc->setPriorityLevel(addr);
+        break;
     case Stop:
         if (procs->stop(proc) != ProcessManager::Success)
         {
@@ -85,7 +87,6 @@ API::Result ProcessCtlHandler(const ProcessID procID,
             procs->schedule();
         }
         break;
-
     case Resume:
         if (procs->resume(proc) != ProcessManager::Success)
         {
