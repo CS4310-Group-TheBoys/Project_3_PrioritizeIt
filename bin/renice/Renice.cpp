@@ -26,6 +26,7 @@ Renice::Result Renice::exec()
         int newPriority = (atoi(arguments().get("NEW_PRIORITY")));
 
         process.setPriorityLevel(procID, newPriority);
+
     }
     return Success;
 }
